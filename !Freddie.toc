@@ -1,0 +1,6 @@
+## Interface: 100000
+## Title: Freddie's Addon
+## Version: 10.0.0.0
+## Author: Freddie
+
+freddie.lua
