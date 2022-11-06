@@ -1,6 +1,22 @@
 -- Need a frame for events
 local frame, events = CreateFrame("FRAME", "!Freddie"), {}
 
+local freddie = {}
+local talentsMain = {
+    ["DEATHKNIGHT"] = { "Sargeras", "Totake" },
+    ["DEMONHUNTER"] = { "Mal'Ganis", "Akeni" },
+    ["DRUID"] = { "Mal'Ganis", "Keikuro" },
+    ["HUNTER"] = { "Mal'Ganis", "Grigorovich" },
+    ["MAGE"] = { "Sargeras", "Eteyu" },
+    ["MONK"] = { "Mal'Ganis", "Momokan" },
+    ["PALADIN"] = { "Feathermoon", "Tefu" },
+    ["PRIEST"] = { "Mal'Ganis", "" },
+    ["ROGUE"] = { "Mal'Ganis", "Akiru" },
+    ["SHAMAN"] = { "Mal'Ganis", "Okuki" },
+    ["WARLOCK"] = { "Mal'Ganis", "Yumame" },
+    ["WARRIOR"] = { "Sargeras", "Yaken" },
+}
+
 local trackingEnabled = {
     1,  -- Pets
     7,  -- Flight Master
@@ -12,35 +28,39 @@ local trackingEnabled = {
 }
 
 function events:PLAYER_ENTERING_WORLD()
+    if FreddieSaved == nil then
+        FreddieSaved = {}
+    end
+
     local needsReload = false
 
     -- Enable auto-loot
-    SetCVar('autoLootDefault', '1')
+    SetCVar("autoLootDefault", "1")
 
-    -- Activate 'Fred' layout
+    -- Activate "Fred" layout
     local layouts = C_EditMode.GetLayouts()
     if layouts.activeLayout ~= 3 then
-        print('> Setting layout to 3')
+        print("> Setting layout to 3")
         C_EditMode.SetActiveLayout(3)
         needsReload = true
     end
 
     -- Enable action bar 2-4
     for i = 2, 4 do
-        local value = Settings.GetValue('PROXY_SHOW_ACTIONBAR_'..i)
+        local value = Settings.GetValue("PROXY_SHOW_ACTIONBAR_"..i)
         if value ~= true then
-            print('> Enabling action bar '..i)
-            Settings.SetValue('PROXY_SHOW_ACTIONBAR_'..i, true)
+            print("> Enabling action bar "..i)
+            Settings.SetValue("PROXY_SHOW_ACTIONBAR_"..i, true)
             needsReload = true
         end
     end
     
     -- Disable action bar 5-8
     for i = 5, 8 do
-        local value = Settings.GetValue('PROXY_SHOW_ACTIONBAR_'..i)
+        local value = Settings.GetValue("PROXY_SHOW_ACTIONBAR_"..i)
         if value ~= false then
-            print('> Disabling action bar '..i)
-            Settings.SetValue('PROXY_SHOW_ACTIONBAR_'..i, false)
+            print("> Disabling action bar "..i)
+            Settings.SetValue("PROXY_SHOW_ACTIONBAR_"..i, false)
             needsReload = true
         end
     end
@@ -52,7 +72,15 @@ function events:PLAYER_ENTERING_WORLD()
 
     if needsReload then
         ReloadUI()
+    else
+        freddie:ClassTalents()
     end
+end
+
+function events:ACTIVE_PLAYER_SPECIALIZATION_CHANGED()
+    C_Timer.After(1, function()
+        freddie:ClassTalents(true)
+    end)
 end
 
 -- Call functions in the events table for events
@@ -64,4 +92,110 @@ end)
 -- Register every event in the events table
 for k, v in pairs(events) do
     frame:RegisterEvent(k)
+end
+
+function freddie:ClassTalents(onlyLoad)
+    local _, class = UnitClass("player")
+    local charRealm = GetRealmName()
+    local charName = UnitName("player")
+
+    local mainRealm, mainName = unpack(talentsMain[class])
+    local isMain = charRealm == mainRealm and charName == mainName
+    local numSpecs = GetNumSpecializations()
+
+    if isMain and onlyLoad == true then return end
+
+    if isMain then
+        print('> Saving talent builds')
+        FreddieSaved[class] = {}
+        
+        local treeNodes = nil
+        for specIndex = 1, numSpecs do
+            FreddieSaved[class][specIndex] = {}
+
+            local configIds = C_ClassTalents.GetConfigIDsBySpecID(GetSpecializationInfo(specIndex))
+            local loadoutNum = 1
+
+            for _, configId in ipairs(configIds) do
+                local configInfo = C_Traits.GetConfigInfo(configId)
+                
+                if treeNodes == nil then
+                    treeNodes = C_Traits.GetTreeNodes(configInfo.treeIDs[1])
+                end
+
+                local loadout = {
+                    name = configInfo.name,
+                    entries = {},
+                }
+
+                for _, treeNodeId in ipairs(treeNodes) do
+                    local treeNode = C_Traits.GetNodeInfo(configId, treeNodeId)
+                    if treeNode.ranksPurchased > 0 then
+                        table.insert(loadout.entries, {
+                            nodeID = treeNodeId,
+                            ranksPurchased = treeNode.ranksPurchased,
+                            selectionEntryID = treeNode.activeEntry.entryID,
+                        })
+                    end
+                end
+
+                FreddieSaved[class][specIndex][loadoutNum] = loadout
+                loadoutNum = loadoutNum + 1
+            end
+        end
+
+    elseif FreddieSaved[class] ~= nil then
+        local specIndex = GetSpecialization()
+        local specId, specName = GetSpecializationInfo(specIndex)
+        print('> Loading talent builds for '..specName)
+
+        local loadouts = FreddieSaved[class][specIndex]
+        for _, loadout in ipairs(loadouts) do
+            local activeConfigId = C_ClassTalents.GetActiveConfigID()
+            local lastSavedConfigId = C_ClassTalents.GetLastSelectedSavedConfigID(specId)
+            local matchingConfigId = freddie:GetConfigIdByName(specIndex, loadout.name)
+            if matchingConfigId ~= nil then
+                print('> Replacing loadout '..loadout.name)
+                C_ClassTalents.DeleteConfig(matchingConfigId)
+            else
+                print('> Creating loadout '..loadout.name)
+            end
+            
+            print((activeConfigId or 0)..':'..(lastSavedConfigId or 0)..':'..(matchingConfigId or 0))
+            C_ClassTalents.ImportLoadout(matchingConfigId or activeConfigId, loadout.entries, loadout.name)
+
+            if matchingConfigId == activeConfigId or matchingConfigId == lastSavedConfigId then
+                matchingConfigId = freddie:GetConfigIdByName(specIndex, loadout.name)
+                C_ClassTalents.LoadConfig(matchingConfigId, true)
+                C_ClassTalents.UpdateLastSelectedSavedConfigID(specId, matchingConfigId)
+            end
+        end
+
+        --C_ClassTalents.CommitConfig()
+    end
+end
+
+function freddie:GetConfigIdByName(specIndex, name)
+    local configIds = C_ClassTalents.GetConfigIDsBySpecID(GetSpecializationInfo(specIndex))
+    for _, configId in ipairs(configIds) do
+        local configInfo = C_Traits.GetConfigInfo(configId)
+        if configInfo.name == name then
+            return configInfo.ID
+        else
+            print(':'..name..':'..configInfo.name..':')
+        end
+    end
+    return nil
+end
+
+-------------------------------------------------------------------------------
+
+SLASH_FREDDIE1 = "/freddie"
+SlashCmdList["FREDDIE"] = function(msg)
+    freddie:ClassTalents()
+end
+
+SLASH_RL1 = "/rl"
+SlashCmdList["RL"] = function(msg)
+    ReloadUI()
 end

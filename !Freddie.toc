@@ -2,5 +2,6 @@
 ## Title: Freddie's Addon
 ## Version: 10.0.0.0
 ## Author: Freddie
+## SavedVariables: FreddieSaved
 
 freddie.lua
