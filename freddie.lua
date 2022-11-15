@@ -34,18 +34,10 @@ function events:PLAYER_ENTERING_WORLD()
         FreddieSaved = {}
     end
 
-    local needsReload = false
-
     -- Enable auto-loot
     SetCVar("autoLootDefault", "1")
 
-    -- Activate "Fred" layout
-    local layouts = C_EditMode.GetLayouts()
-    if layouts.activeLayout ~= 3 then
-        print("> Setting layout to 3")
-        C_EditMode.SetActiveLayout(3)
-        needsReload = true
-    end
+    local needsReload = freddie:ActivateLayout()
 
     -- Enable action bar 2-4
     for i = 2, 4 do
@@ -77,18 +69,23 @@ function events:PLAYER_ENTERING_WORLD()
         end
     end
 
+    --freddie:ClassTalents()
+
     if needsReload then
         ReloadUI()
-    else
-        freddie:ClassTalents()
     end
 end
 
-function events:ACTIVE_PLAYER_SPECIALIZATION_CHANGED()
-    C_Timer.After(1, function()
-        freddie:ClassTalents(true)
-    end)
-end
+-- function events:ACTIVE_PLAYER_SPECIALIZATION_CHANGED()
+--     C_Timer.After(1, function()
+--         freddie:ClassTalents(true)
+
+--         local needsReload = freddie:ActivateLayout()
+--         if needsReload then
+--             ReloadUI()
+--         end
+--     end)
+-- end
 
 -- Call functions in the events table for events
 frame:SetScript("OnEvent", function(self, event, ...)
@@ -99,6 +96,17 @@ end)
 -- Register every event in the events table
 for k, v in pairs(events) do
     frame:RegisterEvent(k)
+end
+
+function freddie:ActivateLayout()
+    -- Activate "Fred" layout
+    local layouts = C_EditMode.GetLayouts()
+    if layouts.activeLayout ~= 3 then
+        print("> Setting layout to 3")
+        C_EditMode.SetActiveLayout(3)
+        return true
+    end
+    return false
 end
 
 function freddie:ClassTalents(onlyLoad)
