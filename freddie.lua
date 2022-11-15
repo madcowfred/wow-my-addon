@@ -18,13 +18,15 @@ local talentsMain = {
 }
 
 local trackingEnabled = {
-    1,  -- Pets
-    7,  -- Flight Master
-    9,  -- Innkeeper
-    11, -- Mailbox
-    15, -- Trivial Quests
-    19, -- Target
-    --21, -- Track Quest POIs ?
+    ["Flight Master"] = true,
+    ["Innkeeper"] = true,
+    ["Mailbox"] = true,
+    ["Points of Interest"] = true,
+    ["Target"] = true,
+    ["Track Hidden"] = true,
+    ["Track Pets"] = true,
+    ["Track Quest POIs"] = true,
+    ["Trivial Quests"] = true,
 }
 
 function events:PLAYER_ENTERING_WORLD()
@@ -66,8 +68,13 @@ function events:PLAYER_ENTERING_WORLD()
     end
 
     -- Set minimap tracking
-    for _, index in ipairs(trackingEnabled) do
-        C_Minimap.SetTracking(index, true)
+    C_Minimap.ClearAllTracking()
+    local trackingTypes = C_Minimap.GetNumTrackingTypes()
+    for trackingIndex = 1, trackingTypes do
+        local name, _ = C_Minimap.GetTrackingInfo(trackingIndex)
+        if trackingEnabled[name] == true then
+            C_Minimap.SetTracking(trackingIndex, true)
+        end
     end
 
     if needsReload then
