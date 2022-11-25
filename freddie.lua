@@ -2,6 +2,18 @@
 local frame, events = CreateFrame("FRAME", "!Freddie"), {}
 
 local freddie = {}
+
+local actionBarSlots = {
+    [28] = { 'item', 110560 }, -- Garrison Hearthstone
+    [29] = { 'item', 140192 }, -- Dalaran Hearthstone
+    [30] = { 'item', 6948 }, -- Hearthstone
+    [35] = { 'spell', 75973 }, -- X-53 Touring Rocket
+    [36] = { 'spell', 122708 }, -- Grand Expedition Yak
+}
+local actionTypeMap = {
+    ['companion'] = 'spell',
+}
+
 local talentsMain = {
     ["DEATHKNIGHT"] = { "Sargeras", "Totake" },
     ["DEMONHUNTER"] = { "Mal'Ganis", "Akeni" },
@@ -56,6 +68,35 @@ function events:PLAYER_ENTERING_WORLD()
             print("> Disabling action bar "..i)
             Settings.SetValue("PROXY_SHOW_ACTIONBAR_"..i, false)
             needsReload = true
+        end
+    end
+
+    -- Add actions we need
+    for slotId, actionData in pairs(actionBarSlots) do
+        local actionType, actionId = GetActionInfo(slotId)
+
+        print((actionType or 'nil')..'|'..actionData[1]..'||'..(actionId or 0)..'|'..actionData[2])
+
+        if actionType == nil or (actionType ~= actionData[1] and actionTypeMap[actionType] ~= actionData[1]) or actionId ~= actionData[2] then
+            print('> '..(actionType == nil and 'Adding' or 'Replacing')..' action bar slot '..slotId..' with '..actionData[1]..':'..actionData[2])
+
+            if actionData[1] == 'item' then
+                if not C_Item.IsItemDataCachedByID(actionData[2]) then
+                    C_Item.RequestLoadItemDataByID(actionData[2])
+                    C_Timer.After(1, function()
+                        PickupItem(actionData[2])
+                        PlaceAction(slotId)
+                        ClearCursor()
+                    end)
+                end
+            else
+                if actionData[1] == 'spell' then
+                    PickupSpell(actionData[2])
+                end
+                
+                PlaceAction(slotId)
+                ClearCursor()
+            end
         end
     end
 
