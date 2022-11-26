@@ -72,28 +72,36 @@ function events:PLAYER_ENTERING_WORLD()
     end
 
     -- Add actions we need
-    for slotId, actionData in pairs(actionBarSlots) do
+    for slotId, slotData in pairs(actionBarSlots) do
         local actionType, actionId = GetActionInfo(slotId)
+        local newType, newId = unpack(slotData)
 
-        print((actionType or 'nil')..'|'..actionData[1]..'||'..(actionId or 0)..'|'..actionData[2])
+        print((actionType or 'nil')..'-'..newType..'--'..(actionId or 0)..'-'..newId)
 
-        if actionType == nil or (actionType ~= actionData[1] and actionTypeMap[actionType] ~= actionData[1]) or actionId ~= actionData[2] then
-            print('> '..(actionType == nil and 'Adding' or 'Replacing')..' action bar slot '..slotId..' with '..actionData[1]..':'..actionData[2])
+        if actionType == nil or (actionType ~= newType and actionTypeMap[actionType] ~= newType) or actionId ~= newId then
+            print('> '..(actionType == nil and 'Adding' or 'Replacing')..' action bar slot '..slotId..' with '..newType..':'..newId)
+            if newType == 'item' then
+                if not C_Item.IsItemDataCachedByID(newId) then
+                    print('not cached')
+                    --C_Item.RequestLoadItemDataByID(newId)
 
-            if actionData[1] == 'item' then
-                if not C_Item.IsItemDataCachedByID(actionData[2]) then
-                    C_Item.RequestLoadItemDataByID(actionData[2])
-                    C_Timer.After(1, function()
-                        PickupItem(actionData[2])
+                    local item = Item:CreateFromItemID(newId)
+                    item:ContinueOnItemLoad(function()
+                        print('hi mum', newId)
+                        PickupItem(newId)
                         PlaceAction(slotId)
                         ClearCursor()
                     end)
+                else
+                    PickupItem(newId)
+                    PlaceAction(slotId)
+                    ClearCursor()
                 end
             else
-                if actionData[1] == 'spell' then
-                    PickupSpell(actionData[2])
+                if newType == 'spell' then
+                    PickupSpell(newId)
                 end
-                
+
                 PlaceAction(slotId)
                 ClearCursor()
             end
