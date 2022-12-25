@@ -30,6 +30,8 @@ local talentsMain = {
 }
 
 local trackingEnabled = {
+    ["Find Herbs"] = true,
+    ["Find Minerals"] = true,
     ["Flight Master"] = true,
     ["Innkeeper"] = true,
     ["Mailbox"] = true,
