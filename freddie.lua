@@ -110,20 +110,23 @@ function events:PLAYER_ENTERING_WORLD()
         end
     end
 
-    -- Set minimap tracking
-    C_Minimap.ClearAllTracking()
-    local trackingTypes = C_Minimap.GetNumTrackingTypes()
-    for trackingIndex = 1, trackingTypes do
-        local name, _ = C_Minimap.GetTrackingInfo(trackingIndex)
-        if trackingEnabled[name] == true then
-            C_Minimap.SetTracking(trackingIndex, true)
-        end
-    end
-
     --freddie:ClassTalents()
 
     if needsReload then
         ReloadUI()
+    else
+        -- Set minimap tracking
+        C_Minimap.ClearAllTracking()
+        C_Timer.After(0, function()
+            local trackingTypes = C_Minimap.GetNumTrackingTypes()
+            for trackingIndex = 1, trackingTypes do
+                local name, _ = C_Minimap.GetTrackingInfo(trackingIndex)
+                if trackingEnabled[name] == true then
+                    C_Minimap.SetTracking(trackingIndex, true)
+                    --print('Enabled tracking: '..name)
+                end
+            end
+        end)
     end
 end
 
