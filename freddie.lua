@@ -14,6 +14,22 @@ local actionTypeMap = {
     ['companion'] = 'spell',
 }
 
+local dragonTalents = {
+    { 64066, 0 }, -- T1
+    { 81466, 0 }, -- T2/1
+    { 64069, 0 }, -- T2/2
+    { 64068, 0 }, -- T2/3
+    { 64067, 0 }, -- T3
+    { 64065, 82385 }, -- T4 choice (shield)
+    { 64064, 0 }, -- T5
+    { 64063, 0 }, -- T6
+    { 64061, 0 }, -- T7
+    { 64062, 82381 }, -- T8 choice (gathering)
+    { 64059, 0 }, -- T9/1
+    { 64060, 0 }, -- T9/2
+    { 64058, 0 }, -- T9/3
+}
+
 local talentsMain = {
     ["DEATHKNIGHT"] = { "Sargeras", "Totake" },
     ["DEMONHUNTER"] = { "Mal'Ganis", "Akeni" },
@@ -105,6 +121,16 @@ function events:PLAYER_ENTERING_WORLD()
                 PlaceAction(slotId)
                 ClearCursor()
             end
+        end
+    end
+
+    -- Dragonriding
+    local configId = C_Traits.GetConfigIDBySystemID(1)
+    for _, talentData in ipairs(dragonTalents) do
+        if talentData[2] == 0 then
+            C_Traits.PurchaseRank(configId, talentData[1])
+        else
+            C_Traits.SetSelection(configId, talentData[1], talentData[2])
         end
     end
 
