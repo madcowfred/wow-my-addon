@@ -78,18 +78,16 @@ function events:PLAYER_ENTERING_WORLD()
         local actionType, actionId = GetActionInfo(slotId)
         local newType, newId = unpack(slotData)
 
-        print((actionType or 'nil')..'-'..newType..'--'..(actionId or 0)..'-'..newId)
+        --print((actionType or 'nil')..'-'..newType..'--'..(actionId or 0)..'-'..newId)
 
         if actionType == nil or (actionType ~= newType and actionTypeMap[actionType] ~= newType) or actionId ~= newId then
-            print('> '..(actionType == nil and 'Adding' or 'Replacing')..' action bar slot '..slotId..' with '..newType..':'..newId)
+            --print('> '..(actionType == nil and 'Adding' or 'Replacing')..' action bar slot '..slotId..' with '..newType..':'..newId)
             if newType == 'item' then
                 if not C_Item.IsItemDataCachedByID(newId) then
-                    print('not cached')
                     --C_Item.RequestLoadItemDataByID(newId)
 
                     local item = Item:CreateFromItemID(newId)
                     item:ContinueOnItemLoad(function()
-                        print('hi mum', newId)
                         PickupItem(newId)
                         PlaceAction(slotId)
                         ClearCursor()
