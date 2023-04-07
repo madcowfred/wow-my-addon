@@ -1,6 +1,6 @@
-## Interface: 100000
+## Interface: 100007
 ## Title: Freddie's Addon
-## Version: 10.0.0.0
+## Version: 10.0.7.0
 ## Author: Freddie
 ## SavedVariables: FreddieSaved
 
