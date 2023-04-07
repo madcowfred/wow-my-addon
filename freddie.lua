@@ -24,7 +24,7 @@ local dragonTalents = {
     { 64064, 0 }, -- T5
     { 64063, 0 }, -- T6
     { 64061, 0 }, -- T7
-    { 64062, 82381 }, -- T8 choice (gathering)
+    { 64062, 82382 }, -- T8 choice (gathering)
     { 64059, 0 }, -- T9/1
     { 64060, 0 }, -- T9/2
     { 64058, 0 }, -- T9/3
@@ -133,6 +133,7 @@ function events:PLAYER_ENTERING_WORLD()
             C_Traits.SetSelection(configId, talentData[1], talentData[2])
         end
     end
+    C_Traits.CommitConfig(configId)
 
     --freddie:ClassTalents()
 
