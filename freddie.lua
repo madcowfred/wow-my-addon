@@ -14,6 +14,7 @@ local actionTypeMap = {
     ['companion'] = 'spell',
 }
 
+-- TraitNode.dbc TraitTreeID=672
 local dragonTalents = {
     { 64066, 0 }, -- T1
     { 81466, 0 }, -- T2/1
@@ -21,8 +22,10 @@ local dragonTalents = {
     { 64068, 0 }, -- T2/3
     { 64067, 0 }, -- T3
     { 64065, 82385 }, -- T4 choice (shield)
-    { 64064, 0 }, -- T5
-    { 64063, 0 }, -- T6
+    { 92672, 0 }, -- T5/1
+    { 64064, 0 }, -- T5/2
+    { 92671, 0 }, -- T6/1
+    { 64063, 0 }, -- T6/2
     { 64061, 0 }, -- T7
     { 64062, 82382 }, -- T8 choice (gathering)
     { 64059, 0 }, -- T9/1
