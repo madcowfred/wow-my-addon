@@ -74,20 +74,20 @@ function events:PLAYER_ENTERING_WORLD()
 
     -- Enable action bar 2-4
     for i = 2, 4 do
-        local value = Settings.GetValue("PROXY_SHOW_ACTIONBAR_"..i)
+        local value = Settings.GetValue("PROXY_SHOW_ACTIONBAR_" .. i)
         if value ~= true then
-            print("> Enabling action bar "..i)
-            Settings.SetValue("PROXY_SHOW_ACTIONBAR_"..i, true)
+            print("> Enabling action bar " .. i)
+            Settings.SetValue("PROXY_SHOW_ACTIONBAR_" .. i, true)
             needsReload = true
         end
     end
-    
+
     -- Disable action bar 5-8
     for i = 5, 8 do
-        local value = Settings.GetValue("PROXY_SHOW_ACTIONBAR_"..i)
+        local value = Settings.GetValue("PROXY_SHOW_ACTIONBAR_" .. i)
         if value ~= false then
-            print("> Disabling action bar "..i)
-            Settings.SetValue("PROXY_SHOW_ACTIONBAR_"..i, false)
+            print("> Disabling action bar " .. i)
+            Settings.SetValue("PROXY_SHOW_ACTIONBAR_" .. i, false)
             needsReload = true
         end
     end
