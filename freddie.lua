@@ -1,7 +1,7 @@
+local freddie = select(2, ...)
+
 -- Need a frame for events
 local frame, events = CreateFrame("FRAME", "!Freddie"), {}
-
-local freddie = {}
 
 local actionBarSlots = {
     [28] = { 'item', 110560 }, -- Garrison Hearthstone
