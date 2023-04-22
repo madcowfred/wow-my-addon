@@ -191,8 +191,8 @@ function freddie:CheckSuggestion(acceptMe, suggestion, offset, index)
     -- DevTools_Dump(suggestion)
     local title = suggestion.title
     if
-        title == 'Dragonflight Dungeon Event' or
-        title == 'World Quest Bonus Event' or
+        title == 'Bonus Event: Dungeons' or
+        title == 'Bonus Event: World Quests' or
         title == 'Copper Coin' or
         title == 'Silver Coin' or
         title == 'Gold Coin' or
