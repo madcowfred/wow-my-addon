@@ -154,41 +154,41 @@ function events:PLAYER_ENTERING_WORLD()
     end)
 
     -- Suggested Content
-    if UnitLevel('player') == 70 then
-        C_Timer.After(0, function() freddie:CheckSuggestions() end)
-    end
+    C_AdventureJournal.UpdateSuggestions()
+    C_Timer.After(1, function() freddie:CheckSuggestions() end)
 
     if needsReload then print('RELOAD UI YO') end
 end
 
 function freddie:CheckSuggestions()
-    C_AdventureJournal.UpdateSuggestions()
-    local avilableSuggestions = C_AdventureJournal.GetNumAvailableSuggestions()
-    local suggestions = C_AdventureJournal.GetSuggestions()
+    local availableSuggestions = C_AdventureJournal.GetNumAvailableSuggestions()
+    if availableSuggestions == 0 then
+        C_AdventureJournal.UpdateSuggestions()
+        C_Timer.After(1, function() freddie:CheckSuggestions() end)
+    end
+    print('Checking '..availableSuggestions..' suggestions')
+
+    local acceptMe = {}
 
     -- Check the extras too?
-    local acceptMe = {}
+    local suggestions = C_AdventureJournal.GetSuggestions()
     for i = 2, #suggestions do
-        -- print('> extra ' .. i)
         freddie:CheckSuggestion(acceptMe, suggestions[i], 0, i)
     end
 
-    for i = 0, avilableSuggestions - 1 do
-        -- print('> normal ' .. i)
+    for i = 0, availableSuggestions - 1 do
         C_AdventureJournal.SetPrimaryOffset(i)
         suggestions = C_AdventureJournal.GetSuggestions()
         freddie:CheckSuggestion(acceptMe, suggestions[1], i, 1)
     end
 
     if #acceptMe > 0 then
+        print('Accepting '..#acceptMe..' suggestion(s)')
         C_Timer.After(2, function() freddie:AcceptSuggestions(acceptMe) end)
     end
-
-    DevTools_Dump(acceptMe)
 end
 
 function freddie:CheckSuggestion(acceptMe, suggestion, offset, index)
-    -- DevTools_Dump(suggestion)
     local title = suggestion.title
     if
         title == 'Bonus Event: Dungeons' or
@@ -209,15 +209,21 @@ end
 
 function freddie:AcceptSuggestions(acceptMe)
     local offset, index, title = unpack(tremove(acceptMe))
-    print('Accepting '..offset..'/'..index..': '..title)
-    C_AdventureJournal.SetPrimaryOffset(offset)
-    local suggs = C_AdventureJournal.GetSuggestions()
-    -- DevTools_Dump(suggs)
 
-    C_AdventureJournal.ActivateEntry(index)
+    print('Accepting ' .. offset .. '/' .. index .. ': ' .. title)
+    if C_AdventureJournal.GetPrimaryOffset() ~= offset then
+        C_AdventureJournal.SetPrimaryOffset(offset)
+    end
+    local suggestions = C_AdventureJournal.GetSuggestions()
+    if suggestions[index].title == title then
+        C_AdventureJournal.ActivateEntry(index)
 
-    if #acceptMe > 0 then
-        C_Timer.After(0.5, function() freddie:AcceptSuggestions(acceptMe) end)
+        if #acceptMe > 0 then
+            C_Timer.After(1, function() freddie:AcceptSuggestions(acceptMe) end)
+        end
+    else
+        print('Expected "' .. title .. '", got "' .. suggestions[index].title .. '" - restarting')
+        C_Timer.After(0, function() freddie:CheckSuggestions() end)
     end
 end
 
