@@ -140,21 +140,84 @@ function events:PLAYER_ENTERING_WORLD()
 
     --freddie:ClassTalents()
 
-    if needsReload then
-        ReloadUI()
-    else
-        -- Set minimap tracking
-        C_Minimap.ClearAllTracking()
-        C_Timer.After(0, function()
-            local trackingTypes = C_Minimap.GetNumTrackingTypes()
-            for trackingIndex = 1, trackingTypes do
-                local name, _ = C_Minimap.GetTrackingInfo(trackingIndex)
-                if trackingEnabled[name] == true then
-                    C_Minimap.SetTracking(trackingIndex, true)
-                    --print('Enabled tracking: '..name)
-                end
+    -- Set minimap tracking
+    C_Minimap.ClearAllTracking()
+    C_Timer.After(0, function()
+        local trackingTypes = C_Minimap.GetNumTrackingTypes()
+        for trackingIndex = 1, trackingTypes do
+            local name, _ = C_Minimap.GetTrackingInfo(trackingIndex)
+            if trackingEnabled[name] == true then
+                C_Minimap.SetTracking(trackingIndex, true)
+                --print('Enabled tracking: '..name)
             end
-        end)
+        end
+    end)
+
+    -- Suggested Content
+    if UnitLevel('player') == 70 then
+        C_Timer.After(0, function() freddie:CheckSuggestions() end)
+    end
+
+    if needsReload then print('RELOAD UI YO') end
+end
+
+function freddie:CheckSuggestions()
+    C_AdventureJournal.UpdateSuggestions()
+    local avilableSuggestions = C_AdventureJournal.GetNumAvailableSuggestions()
+    local suggestions = C_AdventureJournal.GetSuggestions()
+
+    -- Check the extras too?
+    local acceptMe = {}
+    for i = 2, #suggestions do
+        -- print('> extra ' .. i)
+        freddie:CheckSuggestion(acceptMe, suggestions[i], 0, i)
+    end
+
+    for i = 0, avilableSuggestions - 1 do
+        -- print('> normal ' .. i)
+        C_AdventureJournal.SetPrimaryOffset(i)
+        suggestions = C_AdventureJournal.GetSuggestions()
+        freddie:CheckSuggestion(acceptMe, suggestions[1], i, 1)
+    end
+
+    if #acceptMe > 0 then
+        C_Timer.After(2, function() freddie:AcceptSuggestions(acceptMe) end)
+    end
+
+    DevTools_Dump(acceptMe)
+end
+
+function freddie:CheckSuggestion(acceptMe, suggestion, offset, index)
+    -- DevTools_Dump(suggestion)
+    local title = suggestion.title
+    if
+        title == 'Dragonflight Dungeon Event' or
+        title == 'World Quest Bonus Event' or
+        title == 'Copper Coin' or
+        title == 'Silver Coin' or
+        title == 'Gold Coin' or
+        title == 'Bag of Coins' or
+        title == 'Mysterious Coin' or
+        string.find(title, '^Preserving the Past:') or
+        string.find(title, '^Relic Recovery:')
+    then
+        -- Adventure Journal is super janky, try to accept things twice
+        table.insert(acceptMe, { offset, index, title })
+        table.insert(acceptMe, { offset, index, title })
+    end
+end
+
+function freddie:AcceptSuggestions(acceptMe)
+    local offset, index, title = unpack(tremove(acceptMe))
+    print('Accepting '..offset..'/'..index..': '..title)
+    C_AdventureJournal.SetPrimaryOffset(offset)
+    local suggs = C_AdventureJournal.GetSuggestions()
+    -- DevTools_Dump(suggs)
+
+    C_AdventureJournal.ActivateEntry(index)
+
+    if #acceptMe > 0 then
+        C_Timer.After(0.5, function() freddie:AcceptSuggestions(acceptMe) end)
     end
 end
 
