@@ -4,11 +4,11 @@ local freddie = select(2, ...)
 local frame, events = CreateFrame("FRAME", "!Freddie"), {}
 
 local actionBarSlots = {
-    [28] = { 'item', 110560 }, -- Garrison Hearthstone
-    [29] = { 'item', 140192 }, -- Dalaran Hearthstone
-    [30] = { 'item', 6948 }, -- Hearthstone
-    [35] = { 'spell', 75973 }, -- X-53 Touring Rocket
-    [36] = { 'spell', 122708 }, -- Grand Expedition Yak
+    [44] = { 'item', 110560 }, -- Garrison Hearthstone
+    [45] = { 'item', 140192 }, -- Dalaran Hearthstone
+    [46] = { 'item', 6948 }, -- Hearthstone
+    [47] = { 'spell', 75973 }, -- X-53 Touring Rocket
+    [48] = { 'spell', 122708 }, -- Grand Expedition Yak
 }
 local actionTypeMap = {
     ['companion'] = 'spell',
@@ -24,8 +24,10 @@ local dragonTalents = {
     { 64065, 82385 }, -- T4 choice (shield)
     { 92672, 0 }, -- T5/1
     { 64064, 0 }, -- T5/2
+    { 92679, 0 }, -- T5/3
     { 92671, 0 }, -- T6/1
     { 64063, 0 }, -- T6/2
+    { 92678, 0 }, -- T6/3
     { 64061, 0 }, -- T7
     { 64062, 82382 }, -- T8 choice (gathering)
     { 64059, 0 }, -- T9/1
@@ -49,6 +51,7 @@ local talentsMain = {
 }
 
 local trackingEnabled = {
+    ["Find Fish"] = false,
     ["Find Herbs"] = true,
     ["Find Minerals"] = true,
     ["Flight Master"] = true,
@@ -73,7 +76,7 @@ function events:PLAYER_ENTERING_WORLD()
     local needsReload = freddie:ActivateLayout()
 
     -- Enable action bar 2-4
-    for i = 2, 4 do
+    for i = 2, 5 do
         local value = Settings.GetValue("PROXY_SHOW_ACTIONBAR_" .. i)
         if value ~= true then
             print("> Enabling action bar " .. i)
@@ -82,8 +85,8 @@ function events:PLAYER_ENTERING_WORLD()
         end
     end
 
-    -- Disable action bar 5-8
-    for i = 5, 8 do
+    -- Disable action bar 6-8
+    for i = 6, 8 do
         local value = Settings.GetValue("PROXY_SHOW_ACTIONBAR_" .. i)
         if value ~= false then
             print("> Disabling action bar " .. i)
@@ -103,8 +106,6 @@ function events:PLAYER_ENTERING_WORLD()
             --print('> '..(actionType == nil and 'Adding' or 'Replacing')..' action bar slot '..slotId..' with '..newType..':'..newId)
             if newType == 'item' then
                 if not C_Item.IsItemDataCachedByID(newId) then
-                    --C_Item.RequestLoadItemDataByID(newId)
-
                     local item = Item:CreateFromItemID(newId)
                     item:ContinueOnItemLoad(function()
                         PickupItem(newId)
@@ -149,13 +150,15 @@ function events:PLAYER_ENTERING_WORLD()
             if trackingEnabled[name] == true then
                 C_Minimap.SetTracking(trackingIndex, true)
                 --print('Enabled tracking: '..name)
+            elseif trackingEnabled[name] == false then
+                C_Minimap.SetTracking(trackingIndex, false)
             end
         end
     end)
 
     -- Suggested Content
     C_AdventureJournal.UpdateSuggestions()
-    C_Timer.After(1, function() freddie:CheckSuggestions() end)
+    C_Timer.After(2, function() freddie:CheckSuggestions() end)
 
     if needsReload then print('RELOAD UI YO') end
 end
@@ -191,9 +194,11 @@ end
 function freddie:CheckSuggestion(acceptMe, suggestion, offset, index)
     local title = suggestion.title
     if
+        title == 'Aiding the Accord' or
         title == 'Bonus Event: Dungeons' or
         title == 'Bonus Event: World Quests' or
         title == 'Copper Coin' or
+        -- title == 'Fighting is Its Own Reward' or
         title == 'Silver Coin' or
         title == 'Gold Coin' or
         title == 'Bag of Coins' or
@@ -358,7 +363,7 @@ end
 
 SLASH_FREDDIE1 = "/freddie"
 SlashCmdList["FREDDIE"] = function(msg)
-    freddie:ClassTalents()
+    freddie:CheckSuggestions()
 end
 
 SLASH_RL1 = "/rl"
