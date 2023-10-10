@@ -163,6 +163,10 @@ function events:PLAYER_ENTERING_WORLD()
     if needsReload then print('RELOAD UI YO') end
 end
 
+function events:CRAFTINGORDERS_UPDATE_PERSONAL_ORDER_COUNTS()
+    FlashClientIcon()
+end
+
 function freddie:CheckSuggestions()
     local availableSuggestions = C_AdventureJournal.GetNumAvailableSuggestions()
     if availableSuggestions == 0 then
