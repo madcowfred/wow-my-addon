@@ -186,6 +186,13 @@ function events:CRAFTINGORDERS_UPDATE_PERSONAL_ORDER_COUNTS()
     FlashClientIcon()
 end
 
+function events:PLAYER_CHOICE_UPDATE()
+    local choiceInfo = C_PlayerChoice.GetCurrentPlayerChoiceInfo()
+    if choiceInfo.choiceID == 786 then
+        C_PlayerChoice.SendPlayerChoiceResponse(choiceInfo.options[1].buttons[1].id)
+    end
+end
+
 function freddie:CheckSuggestions()
     local availableSuggestions = C_AdventureJournal.GetNumAvailableSuggestions()
     if availableSuggestions == 0 then
