@@ -14,6 +14,22 @@ local actionTypeMap = {
     ['companion'] = 'spell',
 }
 
+local aidingQuests = {
+    70750, -- Aiding the Accord
+    72068, -- Aiding the Accord: A Feast For All
+    72373, -- Aiding the Accord: A Hunt Is On
+    72374, -- Aiding the Accord: Dragonbane Keep
+    72375, -- Aiding the Accord: The Isles Call
+    75259, -- Aiding the Accord: Zskera Vaults
+    75859, -- Aiding the Accord: Sniffenseeking
+    75860, -- Aiding the Accord: Researchers Under Fire
+    75861, -- Aiding the Accord: Suffusion Camp
+    77254, -- Aiding the Accord: Time Rift
+    77976, -- Aiding the Accord: Dreamsurge
+    78446, -- Aiding the Accord: Superbloom
+    78447, -- Aiding the Accord: Emerald Bounty
+}
+
 -- TraitNode.dbc TraitTreeID=672
 local dragonTalents = {
     { 64066, 0 }, -- T1
@@ -200,6 +216,14 @@ end
 
 function freddie:CheckSuggestion(acceptMe, suggestion, offset, index)
     local title = suggestion.title
+
+    if title == 'Aiding the Accord' then
+        for _, questId in ipairs(aidingQuests) do
+            if C_QuestLog.IsOnQuest(questId) then return end
+            if C_QuestLog.IsQuestFlaggedCompleted(questId) then return end
+        end
+    end
+
     if
         title == 'Aiding the Accord' or
         title == 'Bonus Event: Dungeons' or
