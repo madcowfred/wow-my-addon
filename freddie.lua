@@ -186,7 +186,7 @@ end
 
 function events:PLAYER_CHOICE_UPDATE()
     local choiceInfo = C_PlayerChoice.GetCurrentPlayerChoiceInfo()
-    if choiceInfo.choiceID == 786 then
+    if choiceInfo ~= nil and choiceInfo.choiceID == 786 then
         C_PlayerChoice.SendPlayerChoiceResponse(choiceInfo.options[1].buttons[1].id)
     end
 end
