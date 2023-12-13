@@ -215,7 +215,7 @@ function freddie:CheckSuggestions()
         C_AdventureJournal.UpdateSuggestions()
         C_Timer.After(1, function() freddie:CheckSuggestions() end)
     end
-    print('Checking '..availableSuggestions..' suggestions')
+    -- print('Checking '..availableSuggestions..' suggestions')
 
     local acceptMe = {}
 
@@ -251,6 +251,7 @@ function freddie:CheckSuggestion(acceptMe, suggestion, offset, index)
         title == 'Aiding the Accord' or
         title == 'Bonus Event: Dungeons' or
         title == 'Bonus Event: World Quests' or
+        title == 'Brawl: Arathi Basin Comp Stomp' or
         title == 'Copper Coin' or
         -- title == 'Fighting is Its Own Reward' or
         title == 'Silver Coin' or
