@@ -4,11 +4,11 @@ local freddie = select(2, ...)
 local frame, events = CreateFrame("FRAME", "!Freddie"), {}
 
 local actionBarSlots = {
-    [44] = { 'item', 110560 }, -- Garrison Hearthstone
-    [45] = { 'item', 140192 }, -- Dalaran Hearthstone
-    [46] = { 'item', 6948 }, -- Hearthstone
-    [47] = { 'spell', 75973 }, -- X-53 Touring Rocket
-    [48] = { 'spell', 122708 }, -- Grand Expedition Yak
+    [44] = { 'spell', 75973 }, -- X-53 Touring Rocket
+    [45] = { 'spell', 122708 }, -- Grand Expedition Yak
+    [46] = { 'item', 110560 }, -- Garrison Hearthstone
+    [47] = { 'item', 140192 }, -- Dalaran Hearthstone
+    [48] = { 'item', 6948 }, -- Hearthstone
 }
 local actionTypeMap = {
     ['companion'] = 'spell',
