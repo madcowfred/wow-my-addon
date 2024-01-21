@@ -275,18 +275,25 @@ function freddie:AcceptSuggestions(acceptMe)
     local offset, index, title = unpack(tremove(acceptMe))
 
     print('Accepting ' .. offset .. '/' .. index .. ': ' .. title)
+    
     if C_AdventureJournal.GetPrimaryOffset() ~= offset then
         C_AdventureJournal.SetPrimaryOffset(offset)
     end
-    local suggestions = C_AdventureJournal.GetSuggestions()
-    if suggestions[index].title == title then
-        C_AdventureJournal.ActivateEntry(index)
 
-        if #acceptMe > 0 then
-            C_Timer.After(1, function() freddie:AcceptSuggestions(acceptMe) end)
+    local suggestions = C_AdventureJournal.GetSuggestions()
+    if suggestions ~= nil then
+        if suggestions[index].title == title then
+            C_AdventureJournal.ActivateEntry(index)
+
+            if #acceptMe > 0 then
+                C_Timer.After(1, function() freddie:AcceptSuggestions(acceptMe) end)
+            end
+        else
+            print('Expected "' .. title .. '", got "' .. suggestions[index].title .. '" - restarting')
+            C_Timer.After(0, function() freddie:CheckSuggestions() end)
         end
     else
-        print('Expected "' .. title .. '", got "' .. suggestions[index].title .. '" - restarting')
+        print('No suggestions??')
         C_Timer.After(0, function() freddie:CheckSuggestions() end)
     end
 end
