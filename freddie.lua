@@ -249,17 +249,21 @@ function freddie:CheckSuggestion(acceptMe, suggestion, offset, index)
 
     if
         title == 'Aiding the Accord' or
+        title == 'Blooming Dreamseeds' or
         title == 'Bonus Event: Dungeons' or
         title == 'Bonus Event: World Quests' or
         title == 'Brawl: Arathi Basin Comp Stomp' or
-        title == 'Copper Coin' or
-        -- title == 'Fighting is Its Own Reward' or
-        title == 'Silver Coin' or
-        title == 'Gold Coin' or
+        title == 'Dreamsurge' or
+        title == 'Superbloom' or
         title == 'Bag of Coins' or
+        title == 'Copper Coin' or
+        title == 'Gold Coin' or
         title == 'Mysterious Coin' or
+        title == 'Silver Coin' or
+        string.find(title, '^A Worthy Ally:') or
         string.find(title, '^Preserving the Past:') or
-        string.find(title, '^Relic Recovery:')
+        string.find(title, '^Relic Recovery:') or
+        string.find(title, '^The Big Dig:')
     then
         -- Adventure Journal is super janky, try to accept things twice
         table.insert(acceptMe, { offset, index, title })
