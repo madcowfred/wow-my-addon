@@ -92,6 +92,10 @@ function events:PLAYER_ENTERING_WORLD()
     -- Enable auto-loot
     SetCVar("autoLootDefault", "1")
 
+    -- Camera thing
+    SetCVar("cameraIndirectOffset", "10")
+    SetCVar("cameraIndirectVisibility", 1)
+
     local needsReload = freddie:ActivateLayout()
 
     -- Enable action bar 2-4
