@@ -327,11 +327,44 @@ function freddie:ActivateLayout()
     return false
 end
 
+function freddie:InviteFromCommunity()
+    local clubs = C_Club.GetSubscribedClubs()
+    if clubs == nil then
+        print('No clubs! :()')
+        return
+    end
+
+    local found = false
+    for _, club in ipairs(clubs) do
+        if club.name == 'Freddie Freak Factory' then
+            local memberIds = C_Club.GetClubMembers(club.clubId)
+            for _, memberId in ipairs(memberIds) do
+                local info = C_Club.GetMemberInfo(club.clubId, memberId)
+                if info ~= nil and info.isSelf == false then
+                    -- online / away / busy
+                    if info.presence == 1 or info.presence == 4 or info.presence == 5 then
+                        print('Inviting ' .. info.name .. ' from community')
+                        C_PartyInfo.InviteUnit(info.name)
+                        found = true
+                        break
+                    end
+                end
+            end
+        end
+
+        if found then break end
+    end
+    
+    if found == false then
+        print('Nobody is online! :(')
+    end
+end
+
 -------------------------------------------------------------------------------
 
-SLASH_FREDDIE1 = "/freddie"
-SlashCmdList["FREDDIE"] = function(msg)
-    freddie:CheckSuggestions()
+SLASH_FRED1 = "/fred"
+SlashCmdList["FRED"] = function(msg)
+    freddie:InviteFromCommunity()
 end
 
 SLASH_RL1 = "/rl"
