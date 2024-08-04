@@ -167,11 +167,11 @@ function events:PLAYER_ENTERING_WORLD()
     C_Timer.After(0, function()
         local trackingTypes = C_Minimap.GetNumTrackingTypes()
         for trackingIndex = 1, trackingTypes do
-            local name, _ = C_Minimap.GetTrackingInfo(trackingIndex)
-            if trackingEnabled[name] == true then
+            local trackingInfo = C_Minimap.GetTrackingInfo(trackingIndex)
+            if trackingEnabled[trackingInfo.name] == true then
                 C_Minimap.SetTracking(trackingIndex, true)
                 --print('Enabled tracking: '..name)
-            elseif trackingEnabled[name] == false then
+            elseif trackingEnabled[trackingInfo.name] == false then
                 C_Minimap.SetTracking(trackingIndex, false)
             end
         end
