@@ -214,6 +214,9 @@ function events:TRADE_SKILL_LIST_UPDATE()
 end
 
 function freddie:CheckSuggestions()
+    -- MoP Remix spell
+    if C_UnitAuras.GetPlayerAuraBySpellID(424143) then return end
+    
     local availableSuggestions = C_AdventureJournal.GetNumAvailableSuggestions()
     if availableSuggestions == 0 then
         C_AdventureJournal.UpdateSuggestions()
