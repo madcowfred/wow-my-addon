@@ -131,18 +131,18 @@ function events:PLAYER_ENTERING_WORLD()
                 if not C_Item.IsItemDataCachedByID(newId) then
                     local item = Item:CreateFromItemID(newId)
                     item:ContinueOnItemLoad(function()
-                        PickupItem(newId)
+                        C_Item.PickupItem(newId)
                         PlaceAction(slotId)
                         ClearCursor()
                     end)
                 else
-                    PickupItem(newId)
+                    C_Item.PickupItem(newId)
                     PlaceAction(slotId)
                     ClearCursor()
                 end
             else
                 if newType == 'spell' then
-                    PickupSpell(newId)
+                    C_Spell.PickupSpell(newId)
                 end
 
                 PlaceAction(slotId)
