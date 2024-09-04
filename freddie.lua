@@ -58,7 +58,9 @@ local trackingEnabled = {
     ["Find Herbs"] = true,
     ["Find Minerals"] = true,
     ["Flight Master"] = true,
+    ["Focus Target"] = true,
     ["Innkeeper"] = true,
+    ["Low-Level Quests"] = true,
     ["Mailbox"] = true,
     ["Points of Interest"] = true,
     ["Target"] = true,
@@ -66,6 +68,7 @@ local trackingEnabled = {
     ["Track Pets"] = true,
     ["Track Quest POIs"] = true,
     ["Trivial Quests"] = true,
+    ["Warband Completed Quests"] = true,
 }
 
 function events:PLAYER_ENTERING_WORLD()
