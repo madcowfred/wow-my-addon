@@ -105,6 +105,21 @@ function events:PLAYER_ENTERING_WORLD()
         end
     end
 
+    -- Chat garbage
+    local fontFile, _, fontFlags = DEFAULT_CHAT_FRAME:GetFont()
+    DEFAULT_CHAT_FRAME:SetFont(fontFile, 16, fontFlags)
+
+    local frameName = DEFAULT_CHAT_FRAME:GetName()
+    for _, value in pairs(CHAT_FRAME_TEXTURES) do
+        _G[frameName..value]:SetAlpha(0.6)
+    end
+    SetChatWindowAlpha(1, 0.6)
+
+    ChatFrame_AddMessageGroup(DEFAULT_CHAT_FRAME, 'COMBAT_XP_GAIN')
+
+    ChatFrame_RemoveChannel(DEFAULT_CHAT_FRAME, 'Trade')
+    LeaveChannelByName('Services')
+
     -- Add actions we need
     for slotId, slotData in pairs(actionBarSlots) do
         local actionType, actionId = GetActionInfo(slotId)
