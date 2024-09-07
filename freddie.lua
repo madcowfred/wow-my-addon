@@ -14,43 +14,15 @@ local actionTypeMap = {
     ['companion'] = 'spell',
 }
 
--- TraitNode.dbc TraitTreeID=672
-local dragonTalents = {
-    { 64066, 0 }, -- T1
-    { 81466, 0 }, -- T2/1
-    { 64069, 0 }, -- T2/2
-    { 94579, 0 }, -- T2/3
-    { 64068, 0 }, -- T2/4
-    { 64067, 0 }, -- T3
-    { 64065, 82385 }, -- T4 choice (shield)
-    { 92672, 0 }, -- T5/1
-    { 64064, 0 }, -- T5/2
-    { 92679, 0 }, -- T5/3
-    { 92671, 0 }, -- T6/1
-    { 64063, 0 }, -- T6/2
-    { 92678, 0 }, -- T6/3
-    { 94578, 0 }, -- T7/1
-    { 64061, 0 }, -- T7/2
-    { 94577, 0 }, -- T7/3
-    { 64062, 82382 }, -- T8 choice (gathering)
-    { 64059, 0 }, -- T9/1
-    { 64060, 0 }, -- T9/2
-    { 64058, 0 }, -- T9/3
-}
-
-local talentsMain = {
-    ["DEATHKNIGHT"] = { "Sargeras", "Totake" },
-    ["DEMONHUNTER"] = { "Mal'Ganis", "Akeni" },
-    ["DRUID"] = { "Mal'Ganis", "Keikuro" },
-    ["HUNTER"] = { "Mal'Ganis", "Grigorovich" },
-    ["MAGE"] = { "Sargeras", "Eteyu" },
-    ["MONK"] = { "Mal'Ganis", "Momokan" },
-    ["PALADIN"] = { "Feathermoon", "Tefu" },
-    ["PRIEST"] = { "Mal'Ganis", "" },
-    ["ROGUE"] = { "Mal'Ganis", "Akiru" },
-    ["SHAMAN"] = { "Mal'Ganis", "Okuki" },
-    ["WARLOCK"] = { "Mal'Ganis", "Yumame" },
-    ["WARRIOR"] = { "Sargeras", "Yaken" },
+local suggestionToQuest = {
+    ['Ara-Kara, City of Echoes'] = 83465,
+    ['Cinderbrew Meadery'] = 83436,
+    ['City of Threads'] = 83469,
+    ['Darkflame Cleft'] = 83443,
+    ['Priory of the Sacred Flame'] = 83458,
+    ['The Dawnbreaker'] = 83459,
+    ['The Rookery'] = 83432,
+    ['The Stonevault'] = 83457,
 }
 
 local trackingEnabled = {
@@ -153,17 +125,6 @@ function events:PLAYER_ENTERING_WORLD()
         end
     end
 
-    -- Dragonriding
-    local configId = C_Traits.GetConfigIDBySystemID(1)
-    for _, talentData in ipairs(dragonTalents) do
-        if talentData[2] == 0 then
-            C_Traits.PurchaseRank(configId, talentData[1])
-        else
-            C_Traits.SetSelection(configId, talentData[1], talentData[2])
-        end
-    end
-    C_Traits.CommitConfig(configId)
-
     -- Set minimap tracking
     C_Minimap.ClearAllTracking()
     C_Timer.After(0, function()
@@ -216,9 +177,6 @@ function events:TRADE_SKILL_LIST_UPDATE()
 end
 
 function freddie:CheckSuggestions()
-    -- MoP Remix spell
-    if C_UnitAuras.GetPlayerAuraBySpellID(424143) then return end
-    
     local availableSuggestions = C_AdventureJournal.GetNumAvailableSuggestions()
     if availableSuggestions == 0 then
         C_AdventureJournal.UpdateSuggestions()
@@ -259,15 +217,26 @@ function freddie:CheckSuggestion(acceptMe, suggestion, offset, index)
         title == 'Mysterious Coin' or
         title == 'Silver Coin' or
         title == 'Theater Troupe' or
-        title == 'Priory of the Sacred Flame'
+        suggestionToQuest[title]
         -- string.find(title, '^A Worthy Ally:') or
         -- string.find(title, '^Preserving the Past:') or
         -- string.find(title, '^Relic Recovery:') or
         -- string.find(title, '^The Big Dig:')
     then
+        local tryMe = true
+        
+        if suggestionToQuest[title] then
+            if C_QuestLog.IsOnQuest(suggestionToQuest[title]) or
+                C_QuestLog.IsQuestFlaggedCompleted(suggestionToQuest[title]) then
+                tryMe = false
+            end
+        end
+
         -- Adventure Journal is super janky, try to accept things twice
-        table.insert(acceptMe, { offset, index, title })
-        table.insert(acceptMe, { offset, index, title })
+        if tryMe then
+            table.insert(acceptMe, { offset, index, title })
+            table.insert(acceptMe, { offset, index, title })
+        end
     end
 end
 
