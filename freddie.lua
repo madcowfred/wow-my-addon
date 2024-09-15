@@ -92,6 +92,9 @@ function events:PLAYER_ENTERING_WORLD()
     ChatFrame_RemoveChannel(DEFAULT_CHAT_FRAME, 'Trade')
     LeaveChannelByName('Services')
 
+    -- This stupid goddamn reagent bag "help" tip
+    C_Timer.After(5, function() HelpTip:HideAllSystem('TutorialReagentBag') end)
+
     -- Add actions we need
     for slotId, slotData in pairs(actionBarSlots) do
         local actionType, actionId = GetActionInfo(slotId)
