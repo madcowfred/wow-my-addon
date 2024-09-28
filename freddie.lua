@@ -155,6 +155,16 @@ function events:CRAFTINGORDERS_UPDATE_PERSONAL_ORDER_COUNTS()
     FlashClientIcon()
 end
 
+local guildRosterUpdated = 0
+local waitingOnGuildRoster = false
+function events:GUILD_ROSTER_UPDATE(a, b, c)
+    guildRosterUpdated = time()
+    if waitingOnGuildRoster then
+        waitingOnGuildRoster = false
+        freddie:InviteFromGuild()
+    end
+end
+
 function events:PLAYER_CHOICE_UPDATE()
     local choiceInfo = C_PlayerChoice.GetCurrentPlayerChoiceInfo()
     if choiceInfo ~= nil and choiceInfo.choiceID == 786 then
@@ -320,9 +330,38 @@ function freddie:InviteFromCommunity()
 
         if found then break end
     end
-    
+
     if found == false then
-        print('Nobody is online! :(')
+        print('No match in community')
+    end
+end
+
+function freddie:TryInviteFromGuild()
+    if not IsInGuild() then return end
+
+    if time() - guildRosterUpdated > 10 then
+        print('requested')
+        waitingOnGuildRoster = true
+        C_GuildInfo.GuildRoster()
+    else
+        freddie:InviteFromGuild()
+    end
+end
+
+function freddie:InviteFromGuild()
+    local found = false
+    local _, online = GetNumGuildMembers()
+    for i = 1, online do
+        local name, _, _, _, _, _, publicNote = GetGuildRosterInfo(i)
+        if publicNote == 'Freddie' or publicNote == 'Freddie alt' then
+            C_PartyInfo.InviteUnit(name)
+            found = true
+            break
+        end
+    end
+
+    if found == false then
+        print('No match in guild')
     end
 end
 
@@ -331,6 +370,7 @@ end
 SLASH_FRED1 = "/fred"
 SlashCmdList["FRED"] = function(msg)
     freddie:InviteFromCommunity()
+    freddie:TryInviteFromGuild()
 end
 
 SLASH_RL1 = "/rl"
