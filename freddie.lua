@@ -161,23 +161,23 @@ function events:PLAYER_CHOICE_UPDATE()
     end
 end
 
-local ordersUpdated = false
-function events:TRADE_SKILL_SHOW()
-    ordersUpdated = false
-end
+-- local ordersUpdated = false
+-- function events:TRADE_SKILL_SHOW()
+--     ordersUpdated = false
+-- end
 
-function events:TRADE_SKILL_LIST_UPDATE()
-    if ordersUpdated then return end
+-- function events:TRADE_SKILL_LIST_UPDATE()
+--     if ordersUpdated then return end
 
-    local tab = ProfessionsFrame:GetTab()
-    if tab == 3 then
-        ordersUpdated = true
-        C_TradeSkillUI.SetShowUnlearned(false)
-        RunNextFrame(function()
-            ProfessionsFrame.OrdersPage:RequestOrders(nil, false, false)
-        end)
-    end
-end
+--     local tab = ProfessionsFrame:GetTab()
+--     if tab == 3 then
+--         ordersUpdated = true
+--         C_TradeSkillUI.SetShowUnlearned(false)
+--         RunNextFrame(function()
+--             ProfessionsFrame.OrdersPage:RequestOrders(nil, false, false)
+--         end)
+--     end
+-- end
 
 function freddie:CheckSuggestions()
     local availableSuggestions = C_AdventureJournal.GetNumAvailableSuggestions()
