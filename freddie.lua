@@ -57,6 +57,13 @@ function events:PLAYER_ENTERING_WORLD()
     SetCVar("cameraIndirectOffset", "10")
     SetCVar("cameraIndirectVisibility", 1)
 
+    -- Zoom things
+    SetCVar("cameraDistanceMaxZoomFactor", 2.6)
+    SetCVar("cameraReduceUnexpectedMovement", 1)
+
+    -- ?
+    SetCVar("resampleAlwaysSharpen", 1)
+
     local needsReload = freddie:ActivateLayout()
 
     -- Enable action bar 2-4
