@@ -153,8 +153,11 @@ function events:PLAYER_ENTERING_WORLD()
     end)
 
     -- Suggested Content
-    C_AdventureJournal.UpdateSuggestions()
-    C_Timer.After(2, function() freddie:CheckSuggestions() end)
+    -- C_AdventureJournal.UpdateSuggestions()
+    -- C_Timer.After(2, function() freddie:CheckSuggestions() end)
+
+    -- Currency tracking
+    C_CurrencyInfo.SetCurrencyBackpackByID(1792, true) -- Honor
 
     if needsReload then print('RELOAD UI YO') end
 end
