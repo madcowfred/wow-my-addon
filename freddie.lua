@@ -242,7 +242,8 @@ function freddie:CheckSuggestion(acceptMe, suggestion, offset, index)
         title == 'Mysterious Coin' or
         title == 'Silver Coin' or
         title == 'Theater Troupe' or
-        suggestionToQuest[title]
+        suggestionToQuest[title] or
+        string.find(title, '^Sparks of War:')
         -- string.find(title, '^A Worthy Ally:') or
         -- string.find(title, '^Preserving the Past:') or
         -- string.find(title, '^Relic Recovery:') or
@@ -287,7 +288,7 @@ function freddie:AcceptSuggestions(acceptMe)
             C_Timer.After(0, function() freddie:CheckSuggestions() end)
         end
     else
-        print('No suggestions??')
+        print('No xs??')
         C_Timer.After(0, function() freddie:CheckSuggestions() end)
     end
 end
@@ -362,9 +363,10 @@ end
 function freddie:InviteFromGuild()
     local found = false
     local _, online = GetNumGuildMembers()
+    local playerGuid = UnitGUID('player')
     for i = 1, online do
-        local name, _, _, _, _, _, publicNote = GetGuildRosterInfo(i)
-        if publicNote == 'Freddie' or publicNote == 'Freddie alt' then
+        local name, _, _, _, _, _, publicNote, _, _, _, _, _, _, _, _, _, guid = GetGuildRosterInfo(i)
+        if guid ~= playerGuid and (publicNote == 'Freddie' or publicNote == 'Freddie alt') then
             C_PartyInfo.InviteUnit(name)
             found = true
             break
