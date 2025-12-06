@@ -5,8 +5,9 @@ local frame, events = CreateFrame("FRAME", "!Freddie"), {}
 
 local actionBarSlots = {
     [30] = { 'spell', 436854 }, -- Switch Flight Style
-    [44] = { 'spell', 75973 }, -- X-53 Touring Rocket
-    [45] = { 'spell', 122708 }, -- Grand Expedition Yak
+    [43] = { 'spell', 465235 }, -- Trader's Gilded Brutosaur
+    [44] = { 'spell', 122708 }, -- Grand Expedition Yak
+    [45] = { 'spell', 75973 }, -- X-53 Touring Rocket
     [46] = { 'item', 110560 }, -- Garrison Hearthstone
     [47] = { 'item', 140192 }, -- Dalaran Hearthstone
     [48] = { 'item', 6948 }, -- Hearthstone
