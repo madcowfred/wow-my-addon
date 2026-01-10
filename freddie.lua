@@ -172,6 +172,9 @@ function events:PLAYER_ENTERING_WORLD()
     -- Currency tracking
     C_CurrencyInfo.SetCurrencyBackpackByID(1792, true) -- Honor
 
+    -- Bartender4
+    C_Timer.After(5, function() SlashCmdList["ACECONSOLE_BT"]("profiles choose Default") end)
+
     if needsReload then print('RELOAD UI YO') end
 end
 
