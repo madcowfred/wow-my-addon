@@ -11,6 +11,12 @@ local actionBarSlots = {
     [46] = { 'item', 110560 }, -- Garrison Hearthstone
     [47] = { 'item', 140192 }, -- Dalaran Hearthstone
     [48] = { 'item', 6948 }, -- Hearthstone
+    [121] = { 'spell', 372608 }, -- Surge Forward
+    [122] = { 'spell', 372610 }, -- Skyward Ascent
+    [123] = { 'spell', 361584 }, -- Whirling Surge
+    [124] = { nil, nil },
+    [125] = { 'spell', 403092 }, -- Aerial Halt
+    [126] = { 'spell', 425782 }, -- Second Wind
 }
 local actionTypeMap = {
     ['companion'] = 'spell',
@@ -106,33 +112,40 @@ function events:PLAYER_ENTERING_WORLD()
 
     -- Add actions we need
     for slotId, slotData in pairs(actionBarSlots) do
-        local actionType, actionId = GetActionInfo(slotId)
         local newType, newId = unpack(slotData)
+        if newType == nil then
+            if HasAction(slotId) then
+                PickupAction(slotId)
+                ClearCursor()
+            end
+        else
+            local actionType, actionId = GetActionInfo(slotId)
 
-        --print((actionType or 'nil')..'-'..newType..'--'..(actionId or 0)..'-'..newId)
+            --print((actionType or 'nil')..'-'..newType..'--'..(actionId or 0)..'-'..newId)
 
-        if actionType == nil or (actionType ~= newType and actionTypeMap[actionType] ~= newType) or actionId ~= newId then
-            --print('> '..(actionType == nil and 'Adding' or 'Replacing')..' action bar slot '..slotId..' with '..newType..':'..newId)
-            if newType == 'item' then
-                if not C_Item.IsItemDataCachedByID(newId) then
-                    local item = Item:CreateFromItemID(newId)
-                    item:ContinueOnItemLoad(function()
+            if actionType == nil or (actionType ~= newType and actionTypeMap[actionType] ~= newType) or actionId ~= newId then
+                --print('> '..(actionType == nil and 'Adding' or 'Replacing')..' action bar slot '..slotId..' with '..newType..':'..newId)
+                if newType == 'item' then
+                    if not C_Item.IsItemDataCachedByID(newId) then
+                        local item = Item:CreateFromItemID(newId)
+                        item:ContinueOnItemLoad(function()
+                            C_Item.PickupItem(newId)
+                            PlaceAction(slotId)
+                            ClearCursor()
+                        end)
+                    else
                         C_Item.PickupItem(newId)
                         PlaceAction(slotId)
                         ClearCursor()
-                    end)
+                    end
                 else
-                    C_Item.PickupItem(newId)
+                    if newType == 'spell' then
+                        C_Spell.PickupSpell(newId)
+                    end
+
                     PlaceAction(slotId)
                     ClearCursor()
                 end
-            else
-                if newType == 'spell' then
-                    C_Spell.PickupSpell(newId)
-                end
-
-                PlaceAction(slotId)
-                ClearCursor()
             end
         end
     end
