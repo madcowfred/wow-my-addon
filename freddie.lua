@@ -173,7 +173,11 @@ function events:PLAYER_ENTERING_WORLD()
     C_CurrencyInfo.SetCurrencyBackpackByID(1792, true) -- Honor
 
     -- Bartender4
-    C_Timer.After(5, function() SlashCmdList["ACECONSOLE_BT"]("profiles choose Default") end)
+    C_Timer.After(5, function()
+        if C_AddOns.IsAddOnLoaded("Bartender4") then
+            SlashCmdList["ACECONSOLE_BT"]("profiles choose Default")
+        end
+    end)
 
     if needsReload then print('RELOAD UI YO') end
 end
