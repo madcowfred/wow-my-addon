@@ -36,6 +36,7 @@ local suggestionToQuest = {
 local trackingEnabled = {
     ["Find Fish"] = false,
     ["Find Herbs"] = true,
+    ["Find Lumber"] = true,
     ["Find Minerals"] = true,
     ["Flight Master"] = true,
     ["Focus Target"] = true,
