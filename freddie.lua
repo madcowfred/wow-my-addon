@@ -4,6 +4,7 @@ local freddie = select(2, ...)
 local frame, events = CreateFrame("FRAME", "!Freddie"), {}
 
 local actionBarSlots = {
+    [25] = { 'spell', 1229376 }, -- Single-Button Assistant
     [30] = { 'spell', 436854 }, -- Switch Flight Style
     [43] = { 'spell', 465235 }, -- Trader's Gilded Brutosaur
     [44] = { 'spell', 122708 }, -- Grand Expedition Yak
