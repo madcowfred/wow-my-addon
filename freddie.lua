@@ -69,6 +69,9 @@ function events:PLAYER_ENTERING_WORLD()
     SetCVar("cameraDistanceMaxZoomFactor", 2.6)
     SetCVar("cameraReduceUnexpectedMovement", 1)
 
+    -- Faster loading?
+    SetCVar("worldPreloadNonCritical", 0)
+
     -- ?
     SetCVar("resampleAlwaysSharpen", 1)
 
